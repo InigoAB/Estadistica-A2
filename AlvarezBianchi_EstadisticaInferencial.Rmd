@@ -1,0 +1,50 @@
+---
+title: "A2 - Estadística inferencial: tests de hipótesis de una y dos muestras"
+author: "Iñigo Alvarez Bianchi"
+date: "23/11/2020"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libraries, message=FALSE, warning=FALSE}
+# Empiezo cargando los paquetes que usaré:
+library(knitr)
+library(gridExtra)
+library(tidyverse)
+```
+
+# 1 Estadística descriptiva y visualización
+
+Cargo los datos, visualizo las primeras filas y compruebo la estructura de los datos para ver que se han interpretado correctamente.
+```{r Estadística_descriptiva_y_visualizacion, warning=FALSE}
+CCS <- read.csv("ChildCarSeats_clean.csv", stringsAsFactors=TRUE)
+head(CCS)
+str(CCS)
+```
+
+Feo que los datos numéricos aparecen como tal y los de texto como factor, tal como necesito.
+
+Ahora voy a hacer un gráfico para cada variable.
+```{r Estadística_descriptiva_y_visualizacion2, message=FALSE, warning=FALSE}
+p1 <- qplot(Sales, data=CCS)
+p2 <- qplot(CompPrice, data=CCS)
+p3 <- qplot(Income, data=CCS)
+p4 <- qplot(Advertising, data=CCS)
+p5 <- qplot(Population, data=CCS)
+p6 <- qplot(Price, data=CCS)
+p7 <- qplot(ShelveLoc, data=CCS)
+p8 <- qplot(Age, data=CCS)
+p9 <- qplot(Education, data=CCS)
+p10 <- qplot(Urban, data=CCS)
+p11 <- qplot(US, data=CCS)
+grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
+```
+
+Se pueden ver varios histo
