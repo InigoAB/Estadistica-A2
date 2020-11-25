@@ -74,10 +74,13 @@ ICM <- function(pobl, NC=0.95) {
   U <- mean(pobl) + z*SE
   round(c(L,U), 2)
 }
+
+ICM_sales <- ICM(CCS$Sales)
+ICM_sales
 ```
 
 ## 2.2 Interpretación
-
+La media de ventas en miles se encuentra entre [7.14, 1.68] para un nivel de confianza del 95%.
 
 ## 2.3 Intervalo de confianza de la media poblacional de Sales en USA y fuera de USA
 ```{r 2.3}
@@ -87,3 +90,7 @@ ICM_salesFueraUSA <- ICM(CCS[CCS$US=="No",]$Sales)
 ICM_salesFueraUSA
 ```
 
+Podemos concluir que las dos variables tienen medias poblaciones diferentes ya que hemos obtenido intervalos de confianza que no tienen nigún valor en común. Podemos decir, con un nivel de confianza del 95%, que las ventas en Estados Unidos, son superiores a las ventas fuera de Estados Unidos.
+
+
+# 3 Ventas del producto en USA y fuera de USA
