@@ -23,28 +23,67 @@ library(tidyverse)
 # 1 Estadística descriptiva y visualización
 
 Cargo los datos, visualizo las primeras filas y compruebo la estructura de los datos para ver que se han interpretado correctamente.
-```{r Estadística_descriptiva_y_visualizacion, warning=FALSE}
+```{r 1, warning=FALSE}
 CCS <- read.csv("ChildCarSeats_clean.csv", stringsAsFactors=TRUE)
 head(CCS)
 str(CCS)
 ```
 
-Feo que los datos numéricos aparecen como tal y los de texto como factor, tal como necesito.
+Veo que los datos numéricos aparecen como tal y los de texto como factor, tal como necesito.
+
+```{r 1.2, message=FALSE, warning=FALSE}}
+summary(CCS)
+```
+
 
 Ahora voy a hacer un gráfico para cada variable.
-```{r Estadística_descriptiva_y_visualizacion2, message=FALSE, warning=FALSE}
-p1 <- qplot(Sales, data=CCS)
-p2 <- qplot(CompPrice, data=CCS)
-p3 <- qplot(Income, data=CCS)
-p4 <- qplot(Advertising, data=CCS)
-p5 <- qplot(Population, data=CCS)
-p6 <- qplot(Price, data=CCS)
+```{r 1.3}
+p1 <- qplot(Sales, data=CCS, bins=20)
+p2 <- qplot(CompPrice, data=CCS, bins=20)
+p3 <- qplot(Income, data=CCS, bins=20)
+p4 <- qplot(Advertising, data=CCS, bins=20)
+p5 <- qplot(Population, data=CCS, bins=20)
+p6 <- qplot(Price, data=CCS, bins=20)
 p7 <- qplot(ShelveLoc, data=CCS)
-p8 <- qplot(Age, data=CCS)
-p9 <- qplot(Education, data=CCS)
+p8 <- qplot(Age, data=CCS, bins=20)
+p9 <- qplot(Education, data=CCS, bins=20)
 p10 <- qplot(Urban, data=CCS)
 p11 <- qplot(US, data=CCS)
 grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 ```
 
-Se pueden ver varios histo
+Se pueden ver varios histogramas y diagramas de barras.
+
+Sales, CimpPrice y Price parecen seguir una distribución similar a la normal. Pero esto no parece ocurrir con el resto de variables.
+
+La mayor parte de los clientes son Urbanos y de Estados Unidos.
+
+
+# 2 Intervalo de confianza de la media poblacional de las ventas
+
+## 2.1 Cálculo
+
+```{r 2.1}
+ICM <- function(pobl, NC=0.95) {
+  alfa <- 1-NC
+  sd <- sd(pobl)
+  n <- length(pobl)
+  SE <- sd / sqrt(n)
+  z <- qt(alfa/2, df=n-1, lower.tail=FALSE)
+  L <- mean(pobl) - z*SE
+  U <- mean(pobl) + z*SE
+  round(c(L,U), 2)
+}
+```
+
+## 2.2 Interpretación
+
+
+## 2.3 Intervalo de confianza de la media poblacional de Sales en USA y fuera de USA
+```{r 2.3}
+ICM_salesUSA <- ICM(CCS[CCS$US=="Yes",]$Sales)
+ICM_salesUSA
+ICM_salesFueraUSA <- ICM(CCS[CCS$US=="No",]$Sales)
+ICM_salesFueraUSA
+```
+
