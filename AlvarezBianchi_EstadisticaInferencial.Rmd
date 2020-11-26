@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(gridExtra)
 library(tidyverse)
+library(data.table)
 ```
 
 # 1 Estadística descriptiva y visualización
@@ -81,7 +82,7 @@ ICM_sales <- icm(CCS$Sales)
 ICM_sales
 ```
 
-Obtengo que la media de ventas, con un nivel de confianza del 95%, se encuentra en el intervalo: [`r icm(CCS$Sales)`]
+Intervalo de la media de ventas (con un nivel de confianza del 95%): [`r icm(CCS$Sales)`]
 
 ```{r 2.1.1}
 t.test(CCS$Sales, conf.level = 0.95)
@@ -90,7 +91,7 @@ t.test(CCS$Sales, conf.level = 0.95)
 Compruebo que aplicando la función t.test el resultado que me da es equivalente.
 
 ## 2.2 Interpretación
-La media de ventas en miles se encuentra entre [7.14, 1.68] para un nivel de confianza del 95%.
+La media de ventas en miles de unidades se encuentra en el intervalo [`r icm(CCS$Sales)`] para un nivel de confianza del 95%.
 
 ## 2.3 Intervalo de confianza de la media poblacional de Sales en USA y fuera de USA
 ```{r 2.3}
@@ -111,10 +112,12 @@ Podemos decir con un 95% de confianza que el valor promedio de las ventas en las
 
 ## 3.1 Hipótesis nula y alternativa
 
-$H_{0}: \mu_{1}=\mu_{2}$ o $H_{0}: \mu_{1}-\mu_{2}\leq0$
-
-$H_{1}: \mu_{1}>\mu_{2}$ o $H_{1}: \mu_{1}-\mu_{2}>0$
-
+$\left\{
+\begin{array}{llcrr}
+H_{0}: &  \mu_1=\mu_2 & \ o \ & \ H_{0}: & \mu_{1}-\mu_{2}\leq0\\
+H_{1}: & \mu_1>\mu_2 & \ o \ & \ H_{1}: & \mu_{1}-\mu_{2}>0
+\end{array}
+\right.$
 
 ## 3.2 Test a aplicar
 
@@ -155,7 +158,7 @@ homoscedasticidad <- function(pobl1, pobl2, NC=0.95) {
   fcritL <- qf(alfa/2, df1=n1-1, df2=n2-2)
   fcritU <- qf(1- alfa/2, df1=n1-1, df2=n2-2)
   pvalue <- min(pf( fobs, df1=n1-1, df2=n2-2, lower.tail=FALSE ), pf( fobs, df1=n1-1, df2=n2-2))*2
-  data.frame(fobs, fcritL, fcritU, pvalue)
+  data.table(fobs, fcritL, fcritU, pvalue)
 }
 
 homoscedasticidad(CCS[CCS$US=="Yes",]$Sales, CCS[CCS$US=="No",]$Sales)
@@ -179,10 +182,10 @@ CH_UD_m2pi_vd <- function(pobl1, pobl2, NC=0.95) {
   # Grados de libertad u
   u <- ((((s1^2)/n1)+((s2^2)/n2))^2)/(((((s1^2)/n1)^2)/(n1-1))+((((s2^2)/n2)^2)/(n2-1)))
   # Región de aceptación
-  tcritL <- qt(alfa, df=u)
+  tcritL <- qt(alfa, df=u, lower.tail=FALSE)
   # Cálculo del valor p
   pvalue <-pt( tobs, df=u, lower.tail=FALSE)
-  data.frame(L=tcritL, U="INF", tobs, pvalue)
+  data.table(L="INF", U=tcritL, tobs, pvalue)
 }
 
 # Ejecuto la función para cada una de estas poblaciones y con el nivel de confianza (NC) por defecto
@@ -194,24 +197,28 @@ Ejecuto la función de R t.test como comprobación:
 t.test(CCS[CCS$US=="Yes",]$Sales, CCS[CCS$US=="No",]$Sales, alternative="greater", var.equal=FALSE)
 ```
 
-El valor p es muy pequeño por lo que rechazo la hipótesis nulas de que las ventas en Estados Unidos y fuera son iguales. Puedo concluir que las ventas en Estados Unidos son más altas con una confianza del 95%. (Parece que he debido de cometer algún error que no consigo detectar porque el valor observado "tobs" cae en la zona de aceptación.)
+El valor p es muy pequeño por lo que rechazo la hipótesis nulas de que las ventas en Estados Unidos y fuera son iguales. Puedo concluir que las ventas en Estados Unidos son más altas con una confianza del 95%.
 
 ## 3.4 Conclusión
 
-El valor p es mucho más pequeño que α, por lo que hay que rechazar la hipótesis nula.
+El valor observado (tobs) es 4.97 y la zona de aceptación de la hipótesis nula es ($-\infty$, 1.649162], por lo que cae fuera así que podemos rechazarla y quedarnos con la alternativa.
+
+También veo que el valor p es mucho más pequeño que $\alpha$, por lo que hay que rechazar la hipótesis nula de que las ventas son iguales en las tiendas de Estados Unidos y las de fuera y aceptar la hipótesis alternativa de que las tiendas en Estados Unidos venden más que las de fuera. 
+
+En el apartado anterior hemos visto que los intervalos de confianza no se solapaban y que el intervalo de la media de ventas de las tiendas de Estados Unidos es superior por lo que sospechaba que se podría decir que las tiendas de Estados Unidos venden más, como se ha confirmado ahora.
 
 
 # 4 Ventas en zonas urbanas y rurales
 
 ¿Son diferentes las ventas de zonas urbanas en comparación con las ventas de zonas rurales?
 
-# 4.1 Hipótesis nula y alternativa
+## 4.1 Hipótesis nula y alternativa
 
 $H_{0}: \mu_{1}=\mu_{2}$ o $H_{0}: \mu_{1}-\mu_{2}=0$
 
 $H_{1}: \mu_{1}≠\mu_{2}$ o $H_{1}: \mu_{1}-\mu_{2}≠0$
 
-# 4.2 Test a aplicar
+## 4.2 Test a aplicar
 
 ```{r 4.2.1}
 length(CCS[CCS$Urban=="Yes",]$Sales)
@@ -241,7 +248,7 @@ En zonas rurales también asumimos normalidad.
 
 Ahora hay que hacer un test de homoscedasticidad:
 
-```{r 3.2.4}
+```{r 4.2.4}
 homoscedasticidad(CCS[CCS$Urban=="Yes",]$Sales, CCS[CCS$Urban=="No",]$Sales)
 ```
 
@@ -262,7 +269,7 @@ CH_UD_m2pi_vi <- function(pobl1, pobl2, NC=0.95) {
   tcritU <- qt( 1-alfa/2, n1+n2-2)
   # Cálculo del valor p
   pvalue <-pt( abs(tobs), df=n1+n2-2, lower.tail=FALSE)*2
-  data.frame(L=tcritL, U=tcritU, tobs, pvalue)
+  data.table(L=tcritL, U=tcritU, tobs, pvalue)
 }
 
 # Ejecuto la función para cada una de estas poblaciones y con el nivel de confianza (NC) por defecto
@@ -273,6 +280,8 @@ Uso la función de R t.test como comprobación:
 ```{r 4.3.2}
 t.test(CCS[CCS$Urban=="Yes",]$Sales, CCS[CCS$Urban=="No",]$Sales,var.equal=TRUE)
 ```
+
+## 4.4 Conclusión
 
 El valor observado sale en la zona de aceptación y el valor p es superior a α, por lo que no puedo rechazar la hipótesis nula de que las ventas son iguales en las tiendas urbanas y las rurales.
 
@@ -290,7 +299,7 @@ $H_{1}: p > 0.5$
 
 ## 5.2 Tipo de test
 
-Apliaré un test sobre la proporción para una muestra grande ya que contamos con una muestra grande, de n = `r nrow(CCS)`.
+Aplicaré un test sobre la proporción para una muestra grande ya que contamos con una muestra grande, de n = `r nrow(CCS)`.
 
 ## 5.3 Cálculos
 
@@ -302,7 +311,7 @@ CH_prop <- function(x, n, p, NC=0.95) {
   zobs <- (pobs-p0)/sqrt((p0*(1-p0))/n)
   zcrit <- qnorm(alfa, lower.tail=FALSE)
   pvalue<- pnorm(zobs, lower.tail=FALSE)
-  data.frame(zobs, zcrit, pvalue)
+  data.table(zobs, zcrit, pvalue)
 }
 
 CH_prop(x=sum(CCS$Price<CCS$CompPrice), n=length(CCS$Price), p=0.5)
@@ -315,7 +324,7 @@ prop.test(x=sum(CCS$Price<CCS$CompPrice), n=length(CCS$Price), p=0.5, alternativ
 
 ## 5.4 Conclusión
 
-El valor crítico ha caído en 1.64 lo que implica que la zona de aceptación es (-∞, 1,64] por lo que con un valor observado 7.04, que cae fuera, rechzamos la hipótesis nula. El valor p es muy pequeño, inferior a la significación fijada del 0.05 así que esto también nos lleva a rechazar la hipótesis nula.
+El valor crítico ha caído en 1.64 lo que implica que la zona de aceptación es ($-\infty$, 1,64] por lo que con un valor observado 7.04, que cae fuera, rechzamos la hipótesis nula. El valor p es muy pequeño, inferior a la significación fijada del 0.05 así que esto también nos lleva a rechazar la hipótesis nula.
 
 Puedo concluir que más de la mitad de las tiendas tienen un precio inferior al de la competencia con un nivel de confianza del 95%.
 
@@ -337,4 +346,45 @@ $H_{1}: p_{1} ≠ p_{2}$
 Aplicaré un test sobre la proporción de dos muestras.
 
 ## 6.3 Cálculos
+
+```{r 6.3.1}
+CH_prop2 <- function(x1, x2, n1, n2, p1, p2, NC=0.95) {
+  alfa <- 1-NC
+  
+  
+  
+  p0 <- p # proporción de la hipótesis
+  pobs <- x/n
+  zobs <- (pobs-p0)/sqrt((p0*(1-p0))/n)
+  zcrit <- qnorm(alfa, lower.tail=FALSE)
+  pvalue<- pnorm(zobs, lower.tail=FALSE)
+  data.table(zobs, zcrit, pvalue)
+}
+
+#CH_prop2(x=sum(CCS$Price<CCS$CompPrice), n=length(CCS$Price), p=0.5)
+```
+
+```{r}
+NC <- 0.95
+alfa <- 1-NC
+x1 <- CCS[CCS$US=="Yes",]    #tiendas de USA
+x2 <- CCS[CCS$US=="No",]    #tiendas de fuera
+n1 <- length(x1$Price)
+n2 <- length(x2$Price)
+p1 <- sum(x1$Price<x1$CompPrice)/n1   #proporción de tiendas de USA con el precio más bajo CCS$Price<CCS$CompPrice
+p2 <- sum(x2$Price<x2$CompPrice)/n2   #proporción de tiendas de fuera con el precio más bajo
+p<-(n1*p1 + n2*p2) / (n1+n2)
+zobs <- (p1-p2)/( sqrt(p*(1-p)*(1/n1+1/n2)) )
+zcrit <- qnorm(alfa, lower.tail=FALSE)
+pvalue<- pnorm(zobs, lower.tail=FALSE)
+data.table(zobs, zcrit, pvalue)
+
+# Validación con prop.test: se construye un data frame que se le pasa > #a prop.test
+success<-c( p1*n1, p2*n2)
+nn<-c(n1,n2)
+prop.test(success, nn, alternative="greater", correct=FALSE)
+```
+
+## 6.4 Conclusión
+
 
