@@ -343,7 +343,7 @@ $H_{1}: p_{1} ≠ p_{2}$
 
 ## 6.2 Tipo de test
 
-Aplicaré un test sobre la proporción de dos muestras.
+Aplicaré un test bilateral sobre la proporción de dos muestras.
 
 ## 6.3 Cálculos
 
@@ -373,18 +373,25 @@ n1 <- length(x1$Price)
 n2 <- length(x2$Price)
 p1 <- sum(x1$Price<x1$CompPrice)/n1   #proporción de tiendas de USA con el precio más bajo CCS$Price<CCS$CompPrice
 p2 <- sum(x2$Price<x2$CompPrice)/n2   #proporción de tiendas de fuera con el precio más bajo
-p<-(n1*p1 + n2*p2) / (n1+n2)
+p<- (n1*p1 + n2*p2) / (n1+n2)
 zobs <- (p1-p2)/( sqrt(p*(1-p)*(1/n1+1/n2)) )
-zcrit <- qnorm(alfa, lower.tail=FALSE)
-pvalue<- pnorm(zobs, lower.tail=FALSE)
-data.table(zobs, zcrit, pvalue)
-
-# Validación con prop.test: se construye un data frame que se le pasa > #a prop.test
-success<-c( p1*n1, p2*n2)
-nn<-c(n1,n2)
-prop.test(success, nn, alternative="greater", correct=FALSE)
+tcrit.L <- qnorm(alfa/2)
+tcrit.U <- qnorm(alfa/2, lower.tail=FALSE)
+pvalue<- pnorm( abs(zobs), lower.tail=FALSE )*2
+data.table(L=tcrit.L, U=tcrit.U, zobs, pvalue)
 ```
+
+```{r}
+# Validación con prop.test: se construye un data frame que se le pasa > #a prop.test
+success<-c(p1*n1, p2*n2)
+nn<-c(n1,n2)
+pp<-c(p1,p2)
+prop.test(success, nn, alternative="two.sided", conf.level = 0.95, correct=FALSE)
+```
+
 
 ## 6.4 Conclusión
 
+La estrategia de precios de las tiendas en USA y fuera de USA es la misma, es decir, la proporción de tiendas que venden por debajo del precio de la competencia es la misma en Estados Unidos y fuera. 
 
+Dado que el valor observado cae en la zona de aceptación [-1.96, 1.96] y el valor z es más grande que 1- 0,95, no podemos rechazar la hipótesis nula de que la estrategia de precios es la misma para las tiendas de USA y las de fuera de USA.
