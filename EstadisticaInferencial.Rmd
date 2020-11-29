@@ -177,6 +177,9 @@ El valor observado cae fuera de la zona de aceptación y el p-valor obtenido es 
 
 Tengo que aplicar un test unilateral por la derecha sobre la media de dos poblaciones independientes con varianzas desconocidas diferentes.
 
+Con el estadístico de contraste siguiente:
+$$t = \frac{\overline{X}_1-\overline{X}_2}{\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}} \sim t\upsilon$$
+
 ## 3.3 Cálculos
 
 Creo una función para este tipo de contraste de hipótesis, que acabo de comentar, por lo que la llamo usando sus iniciales: CH_UD_m2pi_vd, con un nivel de confianza por defecto del (1 - α)*100 = 95%.
@@ -271,6 +274,9 @@ Como el valor observado cae en la zona de aceptación y el p-valor es superior a
 
 Por lo tanto aplicaré un test bilareal sobre la media de dos poblaciones independientes con varianzas desconocidas iguales.
 
+Con el estadístico de contraste siguiente:
+$$t = \frac{\overline{X}_1-\overline{X}_2}{S\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} \sim t_{n_1+n_2-2}$$
+
 ## 4.3 Cálculos
 
 Defino la fórmula con la que hacer los cálculos.
@@ -325,6 +331,9 @@ H_{1}: & p>0.5
 
 Aplicaré un test unilateral por la derecha sobre la proporción para una muestra grande ya que contamos con una de n = `r nrow(CCS)`.
 
+Con el estadístico de contraste siguiente:
+$$z = \frac{\hat{p}-p_0}{\sqrt{\frac{p_0(1-p_0)}n}} \sim N(0,1)$$
+
 ## 5.3 Cálculos
 
 Defino la fórmula con la que realizaré los cálculos.
@@ -378,6 +387,9 @@ H_{1}: & p_{1} ≠ p_{2}
 ## 6.2 Tipo de test
 
 Aplicaré un test bilateral sobre la proporción de dos muestras.
+
+Con el estadístico de contraste siguiente:
+$$z = \frac{\hat{p_1}-\hat{p_2}}{\sqrt{p(1-p)(\frac{1}n_1+\frac{1}n_1)}} \sim N(0,1)$$
 
 ## 6.3 Cálculos
 
