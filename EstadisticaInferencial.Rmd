@@ -128,6 +128,8 @@ H_{1}: & \mu_1>\mu_2 & \ o \ & \ H_{1}: & \mu_{1}-\mu_{2}>0
 \end{array}
 \right.$
 
+Siendo $\mu_1$ la media de las ventas de las tiendas de USA y $\mu_2$ la media de las ventas de las tiendas de fuera.
+
 ## 3.2 Test a aplicar
 
 ```{r 3.2.1}
@@ -237,6 +239,8 @@ H_{1}: & \mu_1≠\mu_2 & \ o \ & \ H_{1}: & \mu_{1}-\mu_{2}≠0
 \end{array}
 \right.$
 
+Siendo $\mu_1$ la media de las ventas de las tiendas de zonas urbanas y $\mu_2$ la media de las ventas de las tiendas de zonas rurales.
+
 ## 4.2 Test a aplicar
 
 ```{r 4.2.1}
@@ -327,6 +331,8 @@ H_{1}: & p>0.5
 \end{array}
 \right.$
 
+Siendo $p$ la proporción de tiendas con un precio inferior al de la competencia.
+
 ## 5.2 Tipo de test
 
 Aplicaré un test unilateral por la derecha sobre la proporción para una muestra grande ya que contamos con una de n = `r nrow(CCS)`.
@@ -383,6 +389,8 @@ H_{0}: &  p_{1} = p_{2}\\
 H_{1}: & p_{1} ≠ p_{2}
 \end{array}
 \right.$
+
+Siendo $p_1$ la proporción de casos en los que el precio de la tienda es más bajo que el de la competencia en Estados Unidos y $p_2$ lo mismo pero fuera de Estados Unidos.
 
 ## 6.2 Tipo de test
 
